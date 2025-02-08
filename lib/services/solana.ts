@@ -10,7 +10,7 @@ import { WalletContextState } from "@solana/wallet-adapter-react";
 import idl from "./idl.json";
 
 // ✅ Set Localnet RPC
-const SOLANA_RPC = "http://127.0.0.1:8899";
+const SOLANA_RPC = "https://api.devnet.solana.com";
 const PROGRAM_ID = new PublicKey(
   "HJTHhCPBZotdBWftcvSwkLKyGi2C56cUtTDqnjV2RaCZ"
 );
@@ -143,6 +143,12 @@ class SolanaService {
         code,
         assetType,
         initialSupply,
+        limit,
+        authorizeRequired,
+        freezeEnabled,
+        clawbackEnabled,
+        regulated,
+        owner: owner.toBase58(),
       });
 
       const mintKeypair = Keypair.generate();
