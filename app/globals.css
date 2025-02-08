@@ -81,3 +81,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Wallet Adapter Button Styles */
+.wallet-adapter-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--radius) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  height: 40px !important;
+  padding: 0 16px !important;
+  transition: all 0.2s !important;
+}
+
+.wallet-adapter-button-trigger {
+  background-color: hsl(var(--primary)) !important;
+}
+
+.wallet-adapter-button:not(:disabled):hover {
+  background-color: hsl(var(--primary) / 0.9) !important;
+}

@@ -9,7 +9,9 @@ export function Header() {
     <header className="border-b">
       <div className="flex h-16 items-center px-4">
         <div className="ml-auto flex items-center space-x-4">
-          <WalletMultiButton />
+          <div className="relative">
+            <WalletMultiButton className="!bg-primary hover:!bg-primary/90 !h-10" />
+          </div>
           <ThemeToggle />
           <UserNav />
         </div>
