@@ -1,5 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,8 +66,10 @@ export default function SignIn() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              "The platform revolutionized how we manage and issue digital assets. It's secure, intuitive, and powerful."
+              &ldquo;The platform revolutionized how we manage and issue digital
+              assets. It&rsquo;s secure, intuitive, and powerful.&rdquo;
             </p>
+
             <footer className="text-sm">Sofia Davis, Asset Manager</footer>
           </blockquote>
         </div>
@@ -128,7 +130,7 @@ export default function SignIn() {
           </Form>
 
           <p className="px-8 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            Don&rsquo;t have an account?{" "}
             <Link
               href="/signup"
               className="underline underline-offset-4 hover:text-primary"

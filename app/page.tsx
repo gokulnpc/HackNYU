@@ -1,13 +1,26 @@
+"use client";
+
+import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Coins, Wallet, BarChart3, Shield } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
+  const { publicKey } = useWallet();
+
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Welcome to Asset Sandbox</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          Welcome to Asset Sandbox
+        </h2>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -21,7 +34,9 @@ export default function Home() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Treasury Balance</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Treasury Balance
+            </CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -55,17 +70,22 @@ export default function Home() {
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             <Button asChild className="w-full">
-              <Link href="/forge">
-                Create New Asset
-              </Link>
+              <Link href="/forge">Create New Asset</Link>
             </Button>
             <Button asChild variant="outline" className="w-full">
-              <Link href="/assets">
-                View Assets
-              </Link>
+              <Link href="/assets">View Assets</Link>
             </Button>
           </CardContent>
         </Card>
+      </div>
+      <div className="mt-6">
+        {publicKey ? (
+          <p className="text-lg font-medium text-green-600">
+            Connected Wallet: {publicKey.toBase58()}
+          </p>
+        ) : (
+          <p className="text-lg text-red-600">Wallet not connected</p>
+        )}
       </div>
     </div>
   );

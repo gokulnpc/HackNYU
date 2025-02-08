@@ -1,198 +1,57 @@
-import { Connection, PublicKey, Transaction, sendAndConfirmTransaction, Keypair } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { Connection, PublicKey, Keypair, SystemProgram } from "@solana/web3.js";
+import { Program, AnchorProvider, BN, Idl } from "@project-serum/anchor";
+import idl from "./idl.json"; // Ensure this file exists
+
+const PROGRAM_ID = new PublicKey(
+  "HJTHhCPBZotdBWftcvSwkLKyGi2C56cUtTDqnjV2RaCZ"
+);
+const SOLANA_RPC = "https://api.devnet.solana.com"; // Devnet RPC endpoint
 
 class SolanaService {
   private connection: Connection;
-  
-  constructor() {
-    // Initialize connection to Solana network (devnet for development)
-    this.connection = new Connection("https://api.devnet.solana.com", "confirmed");
+  private provider: AnchorProvider;
+  private program: Program;
+
+  constructor(wallet: any) {
+    if (!wallet) {
+      throw new Error("Wallet must be provided");
+    }
+
+    this.connection = new Connection(SOLANA_RPC, "confirmed");
+
+    this.provider = new AnchorProvider(this.connection, wallet, {
+      preflightCommitment: "confirmed",
+    });
+
+    this.program = new Program(idl as Idl, PROGRAM_ID, this.provider);
   }
 
-  // Asset Management Functions
-  
-  /**
-   * Retrieve all assets for a wallet
-   */
-  async getAssets(walletAddress: string) {
-    try {
-      const publicKey = new PublicKey(walletAddress);
-      const tokens = await this.connection.getParsedTokenAccountsByOwner(
-        publicKey,
-        { programId: TOKEN_PROGRAM_ID }
-      );
-      
-      return tokens.value.map(token => ({
-        mint: token.account.data.parsed.info.mint,
-        amount: token.account.data.parsed.info.tokenAmount.uiAmount,
-        decimals: token.account.data.parsed.info.tokenAmount.decimals
-      }));
-    } catch (error) {
-      console.error("Error fetching assets:", error);
-      throw new Error("Failed to fetch assets");
-    }
-  }
+  async createAsset(
+    name: string,
+    symbol: string,
+    decimals: number,
+    initialSupply: number,
+    owner: PublicKey
+  ): Promise<string> {
+    const mintKeypair = Keypair.generate();
+    const assetMetadataKeypair = Keypair.generate();
 
-  /**
-   * Get detailed information for a specific asset
-   */
-  async getAssetDetails(assetAddress: string) {
-    try {
-      const publicKey = new PublicKey(assetAddress);
-      const accountInfo = await this.connection.getParsedAccountInfo(publicKey);
-      
-      return accountInfo;
-    } catch (error) {
-      console.error("Error fetching asset details:", error);
-      throw new Error("Failed to fetch asset details");
-    }
-  }
+    const tx = await this.program.methods
+      .createAsset(name, symbol, decimals, new BN(initialSupply))
+      .accounts({
+        assetMetadata: assetMetadataKeypair.publicKey,
+        authority: owner,
+        mint: mintKeypair.publicKey,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([mintKeypair, assetMetadataKeypair])
+      .rpc();
 
-  /**
-   * Get transaction history for an asset
-   */
-  async getAssetTransactions(assetAddress: string, limit: number = 10) {
-    try {
-      const publicKey = new PublicKey(assetAddress);
-      const signatures = await this.connection.getSignaturesForAddress(
-        publicKey,
-        { limit }
-      );
-      
-      const transactions = await Promise.all(
-        signatures.map(sig => 
-          this.connection.getParsedTransaction(sig.signature)
-        )
-      );
-      
-      return transactions;
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-      throw new Error("Failed to fetch transactions");
-    }
-  }
-
-  // Asset Creation (Forge) Functions
-  
-  /**
-   * Create a new asset token
-   */
-  async createAsset(params: {
-    name: string;
-    symbol: string;
-    decimals: number;
-    initialSupply: number;
-    freezeAuthority?: boolean;
-    owner: PublicKey;
-  }) {
-    try {
-      // Implementation for creating a new token
-      // This would include:
-      // 1. Creating mint account
-      // 2. Initializing token
-      // 3. Setting authorities
-      // 4. Minting initial supply
-      throw new Error("Not implemented");
-    } catch (error) {
-      console.error("Error creating asset:", error);
-      throw new Error("Failed to create asset");
-    }
-  }
-
-  /**
-   * Update asset configuration (freeze, clawback, etc)
-   */
-  async updateAssetConfig(params: {
-    assetAddress: string;
-    freezeEnabled?: boolean;
-    clawbackEnabled?: boolean;
-  }) {
-    try {
-      // Implementation for updating token configuration
-      throw new Error("Not implemented");
-    } catch (error) {
-      console.error("Error updating asset config:", error);
-      throw new Error("Failed to update asset configuration");
-    }
-  }
-
-  // Wallet Functions
-  
-  /**
-   * Get wallet SOL balance
-   */
-  async getWalletBalance(walletAddress: string) {
-    try {
-      const publicKey = new PublicKey(walletAddress);
-      const balance = await this.connection.getBalance(publicKey);
-      return balance;
-    } catch (error) {
-      console.error("Error fetching wallet balance:", error);
-      throw new Error("Failed to fetch wallet balance");
-    }
-  }
-
-  /**
-   * Get all token balances for a wallet
-   */
-  async getWalletTokenBalances(walletAddress: string) {
-    try {
-      const publicKey = new PublicKey(walletAddress);
-      const tokens = await this.connection.getParsedTokenAccountsByOwner(
-        publicKey,
-        { programId: TOKEN_PROGRAM_ID }
-      );
-      
-      return tokens.value.map(token => ({
-        mint: token.account.data.parsed.info.mint,
-        amount: token.account.data.parsed.info.tokenAmount.uiAmount,
-        decimals: token.account.data.parsed.info.tokenAmount.decimals
-      }));
-    } catch (error) {
-      console.error("Error fetching token balances:", error);
-      throw new Error("Failed to fetch token balances");
-    }
-  }
-
-  // Transaction Functions
-  
-  /**
-   * Get transaction details
-   */
-  async getTransaction(signature: string) {
-    try {
-      const transaction = await this.connection.getParsedTransaction(signature);
-      return transaction;
-    } catch (error) {
-      console.error("Error fetching transaction:", error);
-      throw new Error("Failed to fetch transaction");
-    }
-  }
-
-  /**
-   * Get recent transactions for a wallet
-   */
-  async getWalletTransactions(walletAddress: string, limit: number = 10) {
-    try {
-      const publicKey = new PublicKey(walletAddress);
-      const signatures = await this.connection.getSignaturesForAddress(
-        publicKey,
-        { limit }
-      );
-      
-      const transactions = await Promise.all(
-        signatures.map(sig => 
-          this.connection.getParsedTransaction(sig.signature)
-        )
-      );
-      
-      return transactions;
-    } catch (error) {
-      console.error("Error fetching wallet transactions:", error);
-      throw new Error("Failed to fetch wallet transactions");
-    }
+    return tx;
   }
 }
 
-// Export a singleton instance
-export const solanaService = new SolanaService();
+// Export a function to create a service instance dynamically
+export function getSolanaService(wallet: any): SolanaService {
+  return new SolanaService(wallet);
+}
