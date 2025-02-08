@@ -1,1 +1,51 @@
-{"version":"0.1.0","name":"solana_asset_manager","instructions":[{"name":"createAsset","accounts":[{"name":"assetMetadata","isMut":true,"isSigner":true},{"name":"authority","isMut":true,"isSigner":true},{"name":"mint","isMut":true,"isSigner":true},{"name":"tokenAccount","isMut":true,"isSigner":true},{"name":"tokenProgram","isMut":false,"isSigner":false},{"name":"systemProgram","isMut":false,"isSigner":false},{"name":"rent","isMut":false,"isSigner":false}],"args":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"u8"},{"name":"initialSupply","type":"u64"}]}],"accounts":[{"name":"AssetMetadata","type":{"kind":"struct","fields":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"u8"},{"name":"mintAddress","type":"publicKey"}]}}]}
+{
+  "version": "0.1.0",
+  "name": "solana_asset_manager",
+  "instructions": [
+    {
+      "name": "createAsset",
+      "accounts": [
+        { "name": "assetMetadata", "isMut": true, "isSigner": true },
+        { "name": "authority", "isMut": true, "isSigner": true },
+        { "name": "mint", "isMut": true, "isSigner": true },
+        { "name": "tokenAccount", "isMut": true, "isSigner": true },
+        { "name": "tokenProgram", "isMut": false, "isSigner": false },
+        { "name": "systemProgram", "isMut": false, "isSigner": false },
+        { "name": "rent", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "name", "type": "string" },
+        { "name": "code", "type": "string" },
+        { "name": "assetType", "type": "string" },
+        { "name": "decimals", "type": "u8" },
+        { "name": "initialSupply", "type": "u64" },
+        { "name": "limit", "type": { "option": "u64" } },
+        { "name": "authorizeRequired", "type": "bool" },
+        { "name": "freezeEnabled", "type": "bool" },
+        { "name": "clawbackEnabled", "type": "bool" },
+        { "name": "regulated", "type": "bool" }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AssetMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "name", "type": "string" },
+          { "name": "code", "type": "string" },
+          { "name": "assetType", "type": "string" },
+          { "name": "decimals", "type": "u8" },
+          { "name": "initialSupply", "type": "u64" },
+          { "name": "limit", "type": { "option": "u64" } },
+          { "name": "authorizeRequired", "type": "bool" },
+          { "name": "freezeEnabled", "type": "bool" },
+          { "name": "clawbackEnabled", "type": "bool" },
+          { "name": "regulated", "type": "bool" },
+          { "name": "mintAddress", "type": "publicKey" }
+        ]
+      }
+    }
+  ]
+}

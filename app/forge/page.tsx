@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { PublicKey } from "@solana/web3.js";
+import { getSolanaService } from "../../lib/services/solana";
+import { useWallet } from "@solana/wallet-adapter-react";
 import {
   Card,
   CardContent,
@@ -63,6 +66,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function ForgePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const wallet = useWallet();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -75,19 +79,51 @@ export default function ForgePage() {
   });
 
   async function onSubmit(data: FormValues) {
+    if (!wallet.publicKey) {
+      toast({
+        variant: "destructive",
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet to create an asset.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // TODO: Implement actual asset creation
-      console.log(data);
+      const solanaService = getSolanaService(wallet);
+
+      const tx = await solanaService.createAsset({
+        name: data.name,
+        code: data.code,
+        assetType: data.type,
+        decimals: 6, // Standard decimals for most tokens
+        initialSupply: parseInt(data.initialSupply),
+        limit: data.limit ? parseInt(data.limit) : undefined,
+        authorizeRequired: data.authorizeRequired,
+        freezeEnabled: data.freezeEnabled,
+        clawbackEnabled: data.clawbackEnabled,
+        regulated: data.regulated,
+        owner: wallet.publicKey,
+      });
+
       toast({
         title: "Asset Created",
-        description: `Successfully created ${data.name} (${data.code})`,
+        description: `Successfully created ${data.name} (${
+          data.code
+        }). Transaction: ${tx.slice(0, 8)}...`,
       });
+
+      // Reset form after successful creation
+      form.reset();
     } catch (error) {
+      console.error("Error creating asset:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to create asset. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to create asset. Please try again.",
       });
     } finally {
       setIsSubmitting(false);

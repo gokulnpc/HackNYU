@@ -1,27 +1,46 @@
 import { Connection, PublicKey, Keypair, SystemProgram } from "@solana/web3.js";
-import { Program, AnchorProvider, BN, Idl } from "@project-serum/anchor";
-import idl from "./idl.json"; // Ensure this file exists
+import {
+  Program,
+  AnchorProvider,
+  BN,
+  Idl,
+  ProgramAccount,
+} from "@project-serum/anchor";
+import idl from "./idl.json";
 
 const PROGRAM_ID = new PublicKey(
   "HJTHhCPBZotdBWftcvSwkLKyGi2C56cUtTDqnjV2RaCZ"
 );
-const SOLANA_RPC = "https://api.devnet.solana.com"; // Devnet RPC endpoint
+const SOLANA_RPC = "https://api.devnet.solana.com";
 
-// ✅ Define the expected Asset Metadata Account Type
-interface AssetMetadata {
+// Define the raw account structure that matches your IDL
+interface RawAssetMetadata {
   name: string;
-  symbol: string;
-  mint: string;
+  code: string;
+  assetType: string;
+  decimals: number;
+  initialSupply: BN;
+  limit: BN | null;
+  authorizeRequired: boolean;
+  freezeEnabled: boolean;
+  clawbackEnabled: boolean;
+  regulated: boolean;
+  mintAddress: PublicKey;
 }
 
-// ✅ Corrected Asset Account type for Anchor Program Accounts
-interface AssetAccount {
-  publicKey: PublicKey; // The public key of the account
-  account: {
-    name: string;
-    symbol: string;
-    mint: PublicKey;
-  };
+// Define the processed metadata structure for the frontend
+interface AssetMetadata {
+  name: string;
+  code: string;
+  assetType: string;
+  decimals: number;
+  initialSupply: number;
+  limit?: number;
+  authorizeRequired: boolean;
+  freezeEnabled: boolean;
+  clawbackEnabled: boolean;
+  regulated: boolean;
+  mintAddress: string;
 }
 
 class SolanaService {
@@ -35,11 +54,10 @@ class SolanaService {
     }
 
     this.connection = new Connection(SOLANA_RPC, "confirmed");
-
     this.provider = new AnchorProvider(this.connection, wallet, {
       preflightCommitment: "confirmed",
     });
-
+    console.log("Provider:", this.provider);
     this.program = new Program(idl as Idl, PROGRAM_ID, this.provider);
   }
 
@@ -48,14 +66,23 @@ class SolanaService {
    */
   async getAllAssets(): Promise<AssetMetadata[]> {
     try {
-      // ✅ Correctly infer the type as `AssetAccount[]`
-      const assets =
-        (await this.program.account.assetMetadata.all()) as AssetAccount[];
+      const accounts = await this.program.account.assetMetadata.all();
 
-      return assets.map((asset) => ({
-        name: asset.account.name,
-        symbol: asset.account.symbol,
-        mint: asset.account.mint.toBase58(), // Convert mint to string
+      // Transform the raw accounts into our desired format
+      return accounts.map((account: ProgramAccount<RawAssetMetadata>) => ({
+        name: account.account.name,
+        code: account.account.code,
+        assetType: account.account.assetType,
+        decimals: account.account.decimals,
+        initialSupply: account.account.initialSupply.toNumber(),
+        limit: account.account.limit
+          ? account.account.limit.toNumber()
+          : undefined,
+        authorizeRequired: account.account.authorizeRequired,
+        freezeEnabled: account.account.freezeEnabled,
+        clawbackEnabled: account.account.clawbackEnabled,
+        regulated: account.account.regulated,
+        mintAddress: account.account.mintAddress.toBase58(),
       }));
     } catch (error) {
       console.error("Error fetching assets:", error);
@@ -65,26 +92,52 @@ class SolanaService {
 
   /**
    * Create a new asset on the Solana blockchain.
-   * @param name - Name of the asset
-   * @param symbol - Symbol for the asset
-   * @param decimals - Number of decimal places
-   * @param initialSupply - Initial supply of the asset
-   * @param owner - Public key of the asset owner
    * @returns Transaction Signature
    */
-  async createAsset(
-    name: string,
-    symbol: string,
-    decimals: number,
-    initialSupply: number,
-    owner: PublicKey
-  ): Promise<string> {
+  async createAsset({
+    name,
+    code,
+    assetType,
+    decimals,
+    initialSupply,
+    limit,
+    authorizeRequired,
+    freezeEnabled,
+    clawbackEnabled,
+    regulated,
+    owner,
+  }: {
+    name: string;
+    code: string;
+    assetType: string;
+    decimals: number;
+    initialSupply: number;
+    limit?: number;
+    authorizeRequired: boolean;
+    freezeEnabled: boolean;
+    clawbackEnabled: boolean;
+    regulated: boolean;
+    owner: PublicKey;
+  }): Promise<string> {
     try {
       const mintKeypair = Keypair.generate();
       const assetMetadataKeypair = Keypair.generate();
 
+      const limitValue = limit ? new BN(limit) : null;
+
       const tx = await this.program.methods
-        .createAsset(name, symbol, decimals, new BN(initialSupply))
+        .createAsset(
+          name,
+          code,
+          assetType,
+          decimals,
+          new BN(initialSupply),
+          limitValue,
+          authorizeRequired,
+          freezeEnabled,
+          clawbackEnabled,
+          regulated
+        )
         .accounts({
           assetMetadata: assetMetadataKeypair.publicKey,
           authority: owner,
@@ -103,7 +156,6 @@ class SolanaService {
   }
 }
 
-// Export a function to create a service instance dynamically
 export function getSolanaService(wallet: any): SolanaService {
   return new SolanaService(wallet);
 }
