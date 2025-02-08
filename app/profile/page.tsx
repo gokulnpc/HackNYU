@@ -24,11 +24,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
+// Define TypeScript interface for asset data
+interface Asset {
+  name: string;
+  symbol: string;
+  mint: string;
+}
+
 export default function ProfilePage() {
   const { connection } = useConnection();
   const { publicKey, wallet, connected } = useWallet(); // Ensure wallet is accessed correctly
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
-  const [assets, setAssets] = useState([]);
+  const [assets, setAssets] = useState<Asset[]>([]); // Proper TypeScript type
 
   useEffect(() => {
     if (!publicKey) return;
@@ -50,8 +57,8 @@ export default function ProfilePage() {
 
     const fetchAssets = async () => {
       try {
-        const solanaService = getSolanaService(wallet); // Pass wallet instance
-        const assetsList = await solanaService.getAllAssets();
+        const solanaService = getSolanaService(wallet); // ✅ Pass wallet instance
+        const assetsList: Asset[] = await solanaService.getAllAssets(); // Ensure it returns an array of `Asset`
         setAssets(assetsList);
       } catch (error) {
         console.error("Error fetching assets:", error);
