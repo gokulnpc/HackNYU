@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { getSolanaService } from "@/lib/services/solana";
+import { getSolanaService } from "@/lib/services/solana"; // Ensure this uses localnet
 import { formatAddress } from "@/lib/utils";
 import {
   Card,
@@ -33,9 +33,9 @@ interface Asset {
 
 export default function ProfilePage() {
   const { connection } = useConnection();
-  const { publicKey, wallet, connected } = useWallet(); // Ensure wallet is accessed correctly
+  const { publicKey, wallet, connected } = useWallet();
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
-  const [assets, setAssets] = useState<Asset[]>([]); // Proper TypeScript type
+  const [assets, setAssets] = useState<Asset[]>([]);
 
   useEffect(() => {
     if (!publicKey) return;
@@ -57,8 +57,8 @@ export default function ProfilePage() {
 
     const fetchAssets = async () => {
       try {
-        const solanaService = getSolanaService(wallet); // ✅ Pass wallet instance
-        const assetsList: Asset[] = await solanaService.getAllAssets(); // Ensure it returns an array of `Asset`
+        const solanaService = getSolanaService(wallet); // ✅ Ensure localnet RPC is used
+        const assetsList: Asset[] = await solanaService.getAllAssets();
         setAssets(assetsList);
       } catch (error) {
         console.error("Error fetching assets:", error);
