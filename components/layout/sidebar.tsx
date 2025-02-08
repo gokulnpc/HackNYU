@@ -1,10 +1,10 @@
 "use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
   Home,
   Coins,
   Hammer,
@@ -12,49 +12,50 @@ import {
   BarChart3,
   Search,
   UserCircle,
-  Settings
-} from 'lucide-react';
+  Settings,
+} from "lucide-react";
 
 const routes = [
   {
-    label: 'Home',
+    label: "Home",
     icon: Home,
-    href: '/',
+    href: "/",
   },
   {
-    label: 'Assets',
+    label: "Assets",
     icon: Coins,
-    href: '/assets',
+    href: "/assets",
   },
   {
-    label: 'Forge',
+    label: "Forge",
     icon: Hammer,
-    href: '/forge',
+    href: "/forge",
   },
   {
-    label: 'Treasury',
+    label: "Treasury",
     icon: Wallet,
-    href: '/treasury',
+    href: "/treasury",
   },
   {
-    label: 'Dashboard',
+    label: "Dashboard",
     icon: BarChart3,
-    href: '/dashboard',
+    href: "/dashboard",
   },
   {
-    label: 'Explorer',
+    label: "Explorer",
     icon: Search,
-    href: '/explorer',
+    href: "https://solscan.io/?cluster=devnet",
+    external: true, // ✅ Mark as external link
   },
   {
-    label: 'Profile',
+    label: "Profile",
     icon: UserCircle,
-    href: '/profile',
+    href: "/profile",
   },
   {
-    label: 'Admin',
+    label: "Admin",
     icon: Settings,
-    href: '/admin',
+    href: "/admin",
   },
 ];
 
@@ -70,7 +71,17 @@ export function Sidebar() {
         <div className="space-y-1">
           {routes.map((route) => {
             const isActive = pathname === route.href;
-            return (
+            return route.external ? ( // ✅ Handle external links
+              <Button
+                key={route.href}
+                variant="ghost"
+                className="w-full justify-start text-white/80 hover:bg-white/10"
+                onClick={() => window.open(route.href, "_blank")}
+              >
+                <route.icon className="h-5 w-5 mr-3" />
+                {route.label}
+              </Button>
+            ) : (
               <Button
                 key={route.href}
                 variant={isActive ? "secondary" : "ghost"}
