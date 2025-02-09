@@ -8,11 +8,13 @@ import {
 } from "@project-serum/anchor";
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import idl from "./idl.json";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from "@project-serum/anchor";
 
 // ✅ Set Localnet RPC
 const SOLANA_RPC = "https://api.devnet.solana.com";
 const PROGRAM_ID = new PublicKey(
-  "HJTHhCPBZotdBWftcvSwkLKyGi2C56cUtTDqnjV2RaCZ"
+  "EsQzosNPuUQqTamLa3duvkD7pQyoNjKPGbgf7FBcqjSo"
 );
 
 // ✅ Initialize the connection globally
@@ -86,7 +88,7 @@ class SolanaService {
     try {
       console.log("📡 Fetching all assets...");
       const accounts = await this.program.account.assetMetadata.all();
-
+      console.log("✅ Fetched all assets:", accounts);
       return accounts.map((account) => ({
         name: account.account.name as string,
         code: account.account.code as string,
@@ -151,20 +153,23 @@ class SolanaService {
         owner: owner.toBase58(),
       });
 
-      const mintKeypair = Keypair.generate();
       const assetMetadataKeypair = Keypair.generate();
-
       const limitValue = limit ? new BN(limit) : null;
 
-      console.log(
-        "🔑 Generated Mint Keypair:",
-        mintKeypair.publicKey.toBase58()
-      );
       console.log(
         "🔑 Generated Metadata Keypair:",
         assetMetadataKeypair.publicKey.toBase58()
       );
 
+      console.log("Accounts: ", {
+        assetMetadata: assetMetadataKeypair.publicKey.toString(),
+        authority: owner.toString(),
+        mint: owner.toString(),
+        tokenAccount: owner.toString(),
+        tokenProgram: TOKEN_PROGRAM_ID.toString(),
+        systemProgram: SystemProgram.programId.toString(),
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY.toString(),
+      });
       const tx = await this.program.methods
         .createAsset(
           name,
@@ -179,12 +184,15 @@ class SolanaService {
           regulated
         )
         .accounts({
-          assetMetadata: assetMetadataKeypair.publicKey,
-          authority: owner,
-          mint: mintKeypair.publicKey,
-          systemProgram: SystemProgram.programId,
+          assetMetadata: assetMetadataKeypair.publicKey.toString(),
+          authority: owner.toString(),
+          mint: owner.toString(),
+          tokenAccount: owner.toString(),
+          tokenProgram: TOKEN_PROGRAM_ID.toString(),
+          systemProgram: SystemProgram.programId.toString(),
+          rent: anchor.web3.SYSVAR_RENT_PUBKEY.toString(),
         })
-        .signers([mintKeypair, assetMetadataKeypair])
+        .signers([assetMetadataKeypair])
         .rpc();
 
       console.log("✅ Transaction Signature:", tx);

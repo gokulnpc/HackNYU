@@ -6,12 +6,8 @@
       "name": "createAsset",
       "accounts": [
         { "name": "assetMetadata", "isMut": true, "isSigner": true },
-        { "name": "authority", "isMut": true, "isSigner": true },
-        { "name": "mint", "isMut": true, "isSigner": true },
-        { "name": "tokenAccount", "isMut": true, "isSigner": true },
-        { "name": "tokenProgram", "isMut": false, "isSigner": false },
-        { "name": "systemProgram", "isMut": false, "isSigner": false },
-        { "name": "rent", "isMut": false, "isSigner": false }
+        { "name": "user", "isMut": true, "isSigner": true },
+        { "name": "systemProgram", "isMut": false, "isSigner": false }
       ],
       "args": [
         { "name": "name", "type": "string" },
@@ -25,6 +21,14 @@
         { "name": "clawbackEnabled", "type": "bool" },
         { "name": "regulated", "type": "bool" }
       ]
+    },
+    {
+      "name": "getAsset",
+      "accounts": [
+        { "name": "assetMetadata", "isMut": false, "isSigner": false },
+        { "name": "user", "isMut": false, "isSigner": true }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -43,9 +47,16 @@
           { "name": "freezeEnabled", "type": "bool" },
           { "name": "clawbackEnabled", "type": "bool" },
           { "name": "regulated", "type": "bool" },
-          { "name": "mintAddress", "type": "publicKey" }
+          { "name": "owner", "type": "publicKey" }
         ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "UnauthorizedAccess",
+      "msg": "You are not authorized to access this asset"
     }
   ]
 }
