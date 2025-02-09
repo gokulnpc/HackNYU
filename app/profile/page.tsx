@@ -33,16 +33,16 @@ interface Asset {
 
 export default function ProfilePage() {
   const { connection } = useConnection();
-  const { publicKey, wallet, connected } = useWallet();
+  const wallet = useWallet();
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [assets, setAssets] = useState<Asset[]>([]);
 
   useEffect(() => {
-    if (!publicKey) return;
+    if (!wallet.publicKey) return;
 
     const fetchBalance = async () => {
       try {
-        const balance = await connection.getBalance(publicKey);
+        const balance = await connection.getBalance(wallet.publicKey);
         setWalletBalance(balance / 1e9); // Convert lamports to SOL
       } catch (error) {
         console.error("Error fetching wallet balance:", error);
@@ -50,10 +50,10 @@ export default function ProfilePage() {
     };
 
     fetchBalance();
-  }, [publicKey, connection]);
+  }, [wallet.publicKey, connection]);
 
   useEffect(() => {
-    if (!publicKey || !wallet) return;
+    if (!wallet.publicKey || !wallet) return;
 
     const fetchAssets = async () => {
       try {
@@ -66,7 +66,7 @@ export default function ProfilePage() {
     };
 
     fetchAssets();
-  }, [publicKey, wallet]);
+  }, [wallet.publicKey, wallet]);
 
   return (
     <div className="p-8">
@@ -75,7 +75,7 @@ export default function ProfilePage() {
         <WalletMultiButton />
       </div>
 
-      {connected && (
+      {wallet.connected && (
         <Card>
           <CardHeader>
             <CardTitle>Wallet Information</CardTitle>
@@ -84,7 +84,7 @@ export default function ProfilePage() {
           <CardContent>
             <p>
               <strong>Wallet Address:</strong>{" "}
-              {formatAddress(publicKey?.toBase58() || "")}
+              {formatAddress(wallet.publicKey?.toBase58() || "")}
             </p>
             <p>
               <strong>Balance:</strong>{" "}
