@@ -87,20 +87,20 @@ class SolanaService {
       console.log("📡 Fetching all assets...");
       const accounts = await this.program.account.assetMetadata.all();
 
-      return accounts.map((account: ProgramAccount<RawAssetMetadata>) => ({
-        name: account.account.name,
-        code: account.account.code,
-        assetType: account.account.assetType,
-        decimals: account.account.decimals,
-        initialSupply: account.account.initialSupply.toNumber(),
+      return accounts.map((account) => ({
+        name: account.account.name as string,
+        code: account.account.code as string,
+        assetType: account.account.assetType as string,
+        decimals: account.account.decimals as number,
+        initialSupply: (account.account.initialSupply as BN).toNumber(),
         limit: account.account.limit
-          ? account.account.limit.toNumber()
+          ? (account.account.limit as BN).toNumber()
           : undefined,
-        authorizeRequired: account.account.authorizeRequired,
-        freezeEnabled: account.account.freezeEnabled,
-        clawbackEnabled: account.account.clawbackEnabled,
-        regulated: account.account.regulated,
-        mintAddress: account.account.mintAddress.toBase58(),
+        authorizeRequired: account.account.authorizeRequired as boolean,
+        freezeEnabled: account.account.freezeEnabled as boolean,
+        clawbackEnabled: account.account.clawbackEnabled as boolean,
+        regulated: account.account.regulated as boolean,
+        mintAddress: (account.account.mintAddress as PublicKey).toBase58(),
       }));
     } catch (error) {
       console.error("❌ Error fetching assets:", error);
@@ -201,17 +201,17 @@ class SolanaService {
   async getAssetByMint(mintAddress: PublicKey): Promise<AssetMetadata | null> {
     try {
       console.log(`🔍 Fetching asset with mint: ${mintAddress.toBase58()}`);
-      const account = await this.program.account.assetMetadata.fetch(
+      const account = (await this.program.account.assetMetadata.fetch(
         mintAddress
-      );
+      )) as unknown as RawAssetMetadata;
 
       if (!account) return null;
 
       return {
-        name: account.name,
-        code: account.code,
-        assetType: account.assetType,
-        decimals: account.decimals,
+        name: account.name as string,
+        code: account.code as string,
+        assetType: account.assetType as string,
+        decimals: account.decimals as number,
         initialSupply: account.initialSupply.toNumber(),
         limit: account.limit ? account.limit.toNumber() : undefined,
         authorizeRequired: account.authorizeRequired,

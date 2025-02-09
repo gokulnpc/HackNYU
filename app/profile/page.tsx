@@ -33,7 +33,8 @@ interface Asset {
 
 export default function ProfilePage() {
   const { connection } = useConnection();
-  const { publicKey, wallet, connected } = useWallet();
+  const walletContext = useWallet();
+  const { publicKey, connected } = walletContext;
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [assets, setAssets] = useState<Asset[]>([]);
 
@@ -51,22 +52,6 @@ export default function ProfilePage() {
 
     fetchBalance();
   }, [publicKey, connection]);
-
-  useEffect(() => {
-    if (!publicKey || !wallet) return;
-
-    const fetchAssets = async () => {
-      try {
-        const solanaService = getSolanaService(wallet); // ✅ Ensure localnet RPC is used
-        const assetsList: Asset[] = await solanaService.getAllAssets();
-        setAssets(assetsList);
-      } catch (error) {
-        console.error("Error fetching assets:", error);
-      }
-    };
-
-    fetchAssets();
-  }, [publicKey, wallet]);
 
   return (
     <div className="p-8">
