@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src="./.github/media/logo.png" alt="SOLfolio" width="100">
+  <img src="./app/favicon.ico" alt="SOLfolio" width="100">
   <br>
   SOLfolio
   <br>
