@@ -9,19 +9,25 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import {
   Coins,
@@ -35,10 +41,11 @@ import {
   Lock,
   RefreshCw,
   FileText,
-  Home
+  Home,
 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { getTransactionService } from "@/lib/services/txn";
 
 interface AssetDetails {
   name: string;
@@ -79,7 +86,7 @@ export default function AssetDetailsPage() {
         if (assetDetails) {
           setAsset({
             ...assetDetails,
-            mintAddress: assetId
+            mintAddress: assetId,
           });
           setCirculatingSupply("0.00");
           setMainVaultBalance("54,000,113.00");
@@ -102,6 +109,11 @@ export default function AssetDetailsPage() {
   const handleMint = async () => {
     if (!wallet.publicKey || !asset) return;
     try {
+      const transactionService = getTransactionService(wallet);
+      const tx = await transactionService.sendTxn({
+        data: parseInt(mintAmount),
+        owner: wallet.publicKey,
+      });
       toast({
         title: "Success",
         description: `Successfully minted ${mintAmount} ${asset.code} tokens`,
@@ -118,6 +130,11 @@ export default function AssetDetailsPage() {
   const handleBurn = async () => {
     if (!wallet.publicKey || !asset) return;
     try {
+      const transactionService = getTransactionService(wallet);
+      const tx = await transactionService.sendTxn({
+        data: parseInt(mintAmount),
+        owner: wallet.publicKey,
+      });
       toast({
         title: "Success",
         description: `Successfully burned ${burnAmount} ${asset.code} tokens`,
@@ -134,6 +151,11 @@ export default function AssetDetailsPage() {
   const handleDistribute = async () => {
     if (!wallet.publicKey || !asset) return;
     try {
+      const transactionService = getTransactionService(wallet);
+      const tx = await transactionService.sendTxn({
+        data: parseInt(mintAmount),
+        owner: wallet.publicKey,
+      });
       toast({
         title: "Success",
         description: `Successfully distributed ${distributeAmount} ${asset.code} tokens`,
@@ -163,7 +185,9 @@ export default function AssetDetailsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Mint Assets</CardTitle>
-                <CardDescription>Create new tokens and add them to circulation</CardDescription>
+                <CardDescription>
+                  Create new tokens and add them to circulation
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -199,10 +223,11 @@ export default function AssetDetailsPage() {
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
                 <p>
-                  Minting allows for the creation of new tokens on the Stellar Network.
-                  When minting, a predefined number of tokens are added to the issuer&aops;s
-                  account, increasing the total supply. This process is used for
-                  distributing rewards, or any system where new token generation is needed.
+                  Minting allows for the creation of new tokens on the Stellar
+                  Network. When minting, a predefined number of tokens are added
+                  to the issuer&aops;s account, increasing the total supply.
+                  This process is used for distributing rewards, or any system
+                  where new token generation is needed.
                 </p>
               </CardContent>
             </Card>
@@ -215,7 +240,9 @@ export default function AssetDetailsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Burn Assets</CardTitle>
-                <CardDescription>Permanently remove tokens from circulation</CardDescription>
+                <CardDescription>
+                  Permanently remove tokens from circulation
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -251,10 +278,10 @@ export default function AssetDetailsPage() {
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
                 <p>
-                  Burning is the process of permanently removing tokens from circulation
-                  on the Stellar Network. This reduces the total supply and can be used
-                  for mechanisms like token buybacks or reducing available supply to
-                  increase scarcity.
+                  Burning is the process of permanently removing tokens from
+                  circulation on the Stellar Network. This reduces the total
+                  supply and can be used for mechanisms like token buybacks or
+                  reducing available supply to increase scarcity.
                 </p>
               </CardContent>
             </Card>
@@ -272,7 +299,10 @@ export default function AssetDetailsPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Destination</label>
-                  <Select value={selectedDestination} onValueChange={setSelectedDestination}>
+                  <Select
+                    value={selectedDestination}
+                    onValueChange={setSelectedDestination}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select destination..." />
                     </SelectTrigger>
@@ -311,10 +341,10 @@ export default function AssetDetailsPage() {
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
                 <p>
-                  Distribution refers to the process of allocating tokens to various
-                  accounts on the Stellar Network. This can be done through sales,
-                  rewards, or airdrops, enabling tokens to circulate effectively
-                  in the ecosystem.
+                  Distribution refers to the process of allocating tokens to
+                  various accounts on the Stellar Network. This can be done
+                  through sales, rewards, or airdrops, enabling tokens to
+                  circulate effectively in the ecosystem.
                 </p>
               </CardContent>
             </Card>
@@ -332,20 +362,30 @@ export default function AssetDetailsPage() {
               <CardContent>
                 <dl className="grid grid-cols-2 gap-4">
                   <div>
-                    <dt className="text-sm font-medium text-muted-foreground">Type</dt>
+                    <dt className="text-sm font-medium text-muted-foreground">
+                      Type
+                    </dt>
                     <dd className="text-lg">{asset.assetType}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-muted-foreground">Supply</dt>
+                    <dt className="text-sm font-medium text-muted-foreground">
+                      Supply
+                    </dt>
                     <dd className="text-lg">{asset.initialSupply}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-muted-foreground">Decimals</dt>
+                    <dt className="text-sm font-medium text-muted-foreground">
+                      Decimals
+                    </dt>
                     <dd className="text-lg">{asset.decimals}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-muted-foreground">Regulated</dt>
-                    <dd className="text-lg">{asset.regulated ? "Yes" : "No"}</dd>
+                    <dt className="text-sm font-medium text-muted-foreground">
+                      Regulated
+                    </dt>
+                    <dd className="text-lg">
+                      {asset.regulated ? "Yes" : "No"}
+                    </dd>
                   </div>
                 </dl>
               </CardContent>
@@ -358,15 +398,21 @@ export default function AssetDetailsPage() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span>Authorization Required</span>
-                  <Badge variant="outline">{asset.authorizeRequired ? "Yes" : "No"}</Badge>
+                  <Badge variant="outline">
+                    {asset.authorizeRequired ? "Yes" : "No"}
+                  </Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Freeze Enabled</span>
-                  <Badge variant="outline">{asset.freezeEnabled ? "Yes" : "No"}</Badge>
+                  <Badge variant="outline">
+                    {asset.freezeEnabled ? "Yes" : "No"}
+                  </Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Clawback Enabled</span>
-                  <Badge variant="outline">{asset.clawbackEnabled ? "Yes" : "No"}</Badge>
+                  <Badge variant="outline">
+                    {asset.clawbackEnabled ? "Yes" : "No"}
+                  </Badge>
                 </div>
               </CardContent>
             </Card>
