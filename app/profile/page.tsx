@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { getSolanaService } from "@/lib/services/solana";
+import { getSolanaService } from "@/lib/services/solana"; // Ensure this uses localnet
 import { formatAddress } from "@/lib/utils";
 import {
   Card,
@@ -33,32 +33,39 @@ interface Asset {
 
 export default function ProfilePage() {
   const { connection } = useConnection();
-  const { publicKey, wallet, connected } = useWallet(); // Ensure wallet is accessed correctly
+  const wallet = useWallet();
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
-  const [assets, setAssets] = useState<Asset[]>([]); // Proper TypeScript type
+  const [assets, setAssets] = useState<Asset[]>([]);
 
   useEffect(() => {
-    if (!publicKey) return;
+    if (!wallet.publicKey) return;
 
     const fetchBalance = async () => {
-      try {
-        const balance = await connection.getBalance(publicKey);
-        setWalletBalance(balance / 1e9); // Convert lamports to SOL
-      } catch (error) {
-        console.error("Error fetching wallet balance:", error);
-      }
-    };
+    try {
+      const publicKey = wallet.publicKey;
+      if (!publicKey) return;
+      const balance = await connection.getBalance(publicKey);
+      setWalletBalance(balance / 1e9);
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+    }
+  };
 
     fetchBalance();
-  }, [publicKey, connection]);
+  }, [wallet.publicKey, connection]);
 
   useEffect(() => {
-    if (!publicKey || !wallet) return;
+    if (!wallet.publicKey || !wallet) return;
 
     const fetchAssets = async () => {
       try {
-        const solanaService = getSolanaService(wallet); // ✅ Pass wallet instance
-        const assetsList: Asset[] = await solanaService.getAllAssets(); // Ensure it returns an array of `Asset`
+        const solanaService = getSolanaService(wallet); // ✅ Ensure localnet RPC is used
+        const metadata = await solanaService.getAllAssets();
+        const assetsList: Asset[] = metadata.map(asset => ({
+          name: asset.name,
+          symbol: asset.code,
+          mint: asset.mintAddress
+        }));
         setAssets(assetsList);
       } catch (error) {
         console.error("Error fetching assets:", error);
@@ -66,7 +73,7 @@ export default function ProfilePage() {
     };
 
     fetchAssets();
-  }, [publicKey, wallet]);
+  }, [wallet.publicKey, wallet]);
 
   return (
     <div className="p-8">
@@ -75,7 +82,7 @@ export default function ProfilePage() {
         <WalletMultiButton />
       </div>
 
-      {connected && (
+      {wallet.connected && (
         <Card>
           <CardHeader>
             <CardTitle>Wallet Information</CardTitle>
@@ -84,7 +91,7 @@ export default function ProfilePage() {
           <CardContent>
             <p>
               <strong>Wallet Address:</strong>{" "}
-              {formatAddress(publicKey?.toBase58() || "")}
+              {formatAddress(wallet.publicKey?.toBase58() || "")}
             </p>
             <p>
               <strong>Balance:</strong>{" "}
