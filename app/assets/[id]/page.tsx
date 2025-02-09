@@ -46,6 +46,7 @@ import {
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { getTransactionService } from "@/lib/services/txn";
+import { ActivityChart } from "@/components/ui/activity-chart";
 
 interface AssetDetails {
   name: string;
@@ -61,6 +62,12 @@ interface AssetDetails {
   mintAddress: string;
 }
 
+interface ActivityData {
+  time: string;
+  amount: number;
+  type: "mint" | "burn";
+}
+
 export default function AssetDetailsPage() {
   const params = useParams();
   const assetId = params.id as string;
@@ -73,6 +80,7 @@ export default function AssetDetailsPage() {
   const [selectedDestination, setSelectedDestination] = useState("");
   const [circulatingSupply, setCirculatingSupply] = useState("0.00");
   const [mainVaultBalance, setMainVaultBalance] = useState("54,000,113.00");
+  const [activityData, setActivityData] = useState<ActivityData[]>([]);
   const wallet = useWallet();
   const { toast } = useToast();
 
@@ -106,6 +114,20 @@ export default function AssetDetailsPage() {
     fetchAssetDetails();
   }, [assetId, wallet.publicKey, toast]);
 
+  const addActivityDataPoint = (amount: number, type: "mint" | "burn") => {
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    setActivityData(prev => {
+      const newData = [...prev, { time, amount: type === "mint" ? amount : -amount, type }];
+      // Keep only last 24 data points
+      if (newData.length > 24) {
+        return newData.slice(-24);
+      }
+      return newData;
+    });
+  };
+
   const handleMint = async () => {
     if (!wallet.publicKey || !asset) return;
     try {
@@ -114,10 +136,13 @@ export default function AssetDetailsPage() {
         data: parseInt(mintAmount),
         owner: wallet.publicKey,
       });
+      const amount = parseFloat(mintAmount);
+      addActivityDataPoint(amount, "mint");
       toast({
         title: "Success",
         description: `Successfully minted ${mintAmount} ${asset.code} tokens`,
       });
+      setMintAmount("");
     } catch (error) {
       toast({
         variant: "destructive",
@@ -135,10 +160,13 @@ export default function AssetDetailsPage() {
         data: parseInt(mintAmount),
         owner: wallet.publicKey,
       });
+      const amount = parseFloat(burnAmount);
+      addActivityDataPoint(amount, "burn");
       toast({
         title: "Success",
         description: `Successfully burned ${burnAmount} ${asset.code} tokens`,
       });
+      setBurnAmount("");
     } catch (error) {
       toast({
         variant: "destructive",
@@ -217,6 +245,8 @@ export default function AssetDetailsPage() {
               </CardContent>
             </Card>
 
+            <ActivityChart data={activityData} assetCode={asset.code} />
+
             <Card>
               <CardHeader>
                 <CardTitle>About Mint</CardTitle>
@@ -271,6 +301,8 @@ export default function AssetDetailsPage() {
                 </Button>
               </CardContent>
             </Card>
+
+            <ActivityChart data={activityData} assetCode={asset.code} />
 
             <Card>
               <CardHeader>
