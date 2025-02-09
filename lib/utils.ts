@@ -6,5 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatAddress(address: string, length = 6) {
-  return `${address.slice(0, length)}...${address.slice(-length)}`;
+  return `${address?.slice(0, length)}...${address?.slice(-length)}`;
 }

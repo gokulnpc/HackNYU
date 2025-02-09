@@ -15,11 +15,13 @@ import {
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import idl from "./idl.json";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from "@project-serum/anchor";
 
 // Configuration
 const SOLANA_RPC = "https://api.devnet.solana.com";
 const PROGRAM_ID = new PublicKey(
-  "HJTHhCPBZotdBWftcvSwkLKyGi2C56cUtTDqnjV2RaCZ"
+  "EsQzosNPuUQqTamLa3duvkD7pQyoNjKPGbgf7FBcqjSo"
 );
 const MIN_BALANCE_FOR_TRANSACTION = 0.1; // SOL
 
@@ -161,23 +163,22 @@ class SolanaService {
     try {
       console.log("📡 Fetching all assets...");
       const accounts = await this.program.account.assetMetadata.all();
-
-      return accounts.map((account: ProgramAccount<any>) => {
-        const asset = account.account as RawAssetMetadata;
-        return {
-          name: asset.name,
-          code: asset.code,
-          assetType: asset.assetType,
-          decimals: asset.decimals,
-          initialSupply: asset.initialSupply.toNumber(),
-          limit: asset.limit?.toNumber(),
-          authorizeRequired: asset.authorizeRequired,
-          freezeEnabled: asset.freezeEnabled,
-          clawbackEnabled: asset.clawbackEnabled,
-          regulated: asset.regulated,
-          mintAddress: asset.mintAddress.toBase58(),
-        };
-      });
+      console.log("✅ Fetched all assets:", accounts);
+      return accounts.map((account) => ({
+        name: account.account.name as string,
+        code: account.account.code as string,
+        assetType: account.account.assetType as string,
+        decimals: account.account.decimals as number,
+        initialSupply: (account.account.initialSupply as BN).toString(),
+        limit: account.account.limit
+          ? (account.account.limit as BN).toString()
+          : undefined,
+        authorizeRequired: account.account.authorizeRequired as boolean,
+        freezeEnabled: account.account.freezeEnabled as boolean,
+        clawbackEnabled: account.account.clawbackEnabled as boolean,
+        regulated: account.account.regulated as boolean,
+        mintAddress: (account.account.owner as PublicKey)?.toBase58(),
+      }));
     } catch (error) {
       console.error("❌ Error fetching assets:", error);
       throw error;
@@ -222,17 +223,24 @@ class SolanaService {
         owner: owner.toBase58(),
       });
 
-      const mintKeypair = Keypair.generate();
       const assetMetadataKeypair = Keypair.generate();
       const limitValue = limit ? new BN(limit) : null;
 
-      console.log("🔑 Generated Keypairs:", {
-        mint: mintKeypair.publicKey.toBase58(),
-        metadata: assetMetadataKeypair.publicKey.toBase58(),
-      });
+      console.log(
+        "🔑 Generated Metadata Keypair:",
+        assetMetadataKeypair.publicKey.toBase58()
+      );
 
-      // Simulate transaction first
-      const simulation = await this.program.methods
+      console.log("Accounts: ", {
+        assetMetadata: assetMetadataKeypair.publicKey.toString(),
+        authority: owner.toString(),
+        mint: owner.toString(),
+        tokenAccount: owner.toString(),
+        tokenProgram: TOKEN_PROGRAM_ID.toString(),
+        systemProgram: SystemProgram.programId.toString(),
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY.toString(),
+      });
+      const tx = await this.program.methods
         .createAsset(
           name,
           code,
@@ -246,15 +254,16 @@ class SolanaService {
           regulated
         )
         .accounts({
-          assetMetadata: assetMetadataKeypair.publicKey,
-          authority: owner,
-          mint: mintKeypair.publicKey,
-          systemProgram: SystemProgram.programId,
-          tokenProgram: TOKEN_PROGRAM_ID,
-          rent: SYSVAR_RENT_PUBKEY,
+          assetMetadata: assetMetadataKeypair.publicKey.toString(),
+          authority: owner.toString(),
+          mint: owner.toString(),
+          tokenAccount: owner.toString(),
+          tokenProgram: TOKEN_PROGRAM_ID.toString(),
+          systemProgram: SystemProgram.programId.toString(),
+          rent: anchor.web3.SYSVAR_RENT_PUBKEY.toString(),
         })
-        .signers([mintKeypair, assetMetadataKeypair])
-        .simulate();
+        .signers([assetMetadataKeypair])
+        .rpc();
 
       console.log("✅ Simulation successful:", simulation.raw);
 
@@ -300,17 +309,17 @@ class SolanaService {
   async getAssetByMint(mintAddress: PublicKey): Promise<AssetMetadata | null> {
     try {
       console.log(`🔍 Fetching asset with mint: ${mintAddress.toBase58()}`);
-      const account = await this.program.account.assetMetadata.fetch(
+      const account = (await this.program.account.assetMetadata.fetch(
         mintAddress
-      );
+      )) as unknown as RawAssetMetadata;
 
       if (!account) return null;
 
       return {
-        name: account.name,
-        code: account.code,
-        assetType: account.assetType,
-        decimals: account.decimals,
+        name: account.name as string,
+        code: account.code as string,
+        assetType: account.assetType as string,
+        decimals: account.decimals as number,
         initialSupply: account.initialSupply.toNumber(),
         limit: account.limit?.toNumber(),
         authorizeRequired: account.authorizeRequired,
