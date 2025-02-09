@@ -503,7 +503,7 @@ export default function AssetDetailsPage() {
         {renderContent()}
       </div>
 
-      <div className="w-64 border-l p-4 space-y-2">
+      <div className="w-64 border-l p-4 space-y-2 bg-green-50">
         <h2 className="font-semibold mb-4">Actions</h2>
         <Button
           variant={activeTab === "home" ? "secondary" : "ghost"}
