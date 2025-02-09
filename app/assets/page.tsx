@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,34 +21,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Search, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { getSolanaService } from "@/lib/services/solana";
+import { useToast } from "@/hooks/use-toast";
 
-// Mock data - replace with actual data from your backend
-const assets = [
-  { 
-    id: "1",
-    code: "GATE",
-    name: "29Zone",
-    type: "Payment Token",
-    supply: "1000000",
-    status: "Active"
-  },
-  {
-    id: "2",
-    code: "ACS",
-    name: "ACCORN SHARES",
-    type: "Security Token",
-    supply: "500000",
-    status: "Active"
-  },
-  {
-    id: "3",
-    code: "AGUSEDIH",
-    name: "Agus Sedih",
-    type: "Utility Token",
-    supply: "750000",
-    status: "Paused"
-  }
-];
+interface Asset {
+  name: string;
+  code: string;
+  assetType: string;
+  initialSupply: string;
+  mintAddress: string;
+  regulated: boolean;
+}
 
 const assetTypes = ["All Types", "Payment Token", "Security Token", "Utility Token"];
 const statusOptions = ["All Status", "Active", "Paused", "Frozen"];
@@ -61,18 +45,44 @@ export default function AssetsPage() {
     field: "name",
     direction: "asc"
   });
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const wallet = useWallet();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      if (!wallet.publicKey) return;
+
+      try {
+        const solanaService = getSolanaService(wallet);
+        const fetchedAssets = await solanaService.getAllAssets();
+        setAssets(fetchedAssets);
+      } catch (error) {
+        console.error("Error fetching assets:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to fetch assets. Please try again.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAssets();
+  }, [wallet, wallet.publicKey, toast]);
 
   const filteredAssets = assets.filter(asset => {
-    const matchesSearch = 
+    const matchesSearch =
       asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       asset.code.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === "All Types" || asset.type === selectedType;
-    const matchesStatus = selectedStatus === "All Status" || asset.status === selectedStatus;
-    return matchesSearch && matchesType && matchesStatus;
+    const matchesType = selectedType === "All Types" || asset.assetType === selectedType;
+    return matchesSearch && matchesType;
   }).sort((a, b) => {
     const direction = sortBy.direction === 'asc' ? 1 : -1;
-    return a[sortBy.field as keyof typeof a] > b[sortBy.field as keyof typeof b] 
-      ? direction 
+    return a[sortBy.field as keyof typeof a] > b[sortBy.field as keyof typeof b]
+      ? direction
       : -direction;
   });
 
@@ -85,7 +95,7 @@ export default function AssetsPage() {
 
   return (
     <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Assets</h1>
         <Button asChild>
           <Link href="/forge">Create New Asset</Link>
@@ -151,26 +161,42 @@ export default function AssetsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAssets.map((asset) => (
-              <TableRow key={asset.id}>
-                <TableCell className="font-medium">{asset.code}</TableCell>
-                <TableCell>{asset.name}</TableCell>
-                <TableCell>{asset.type}</TableCell>
-                <TableCell className="text-right">{asset.supply}</TableCell>
-                <TableCell>
-                  <Badge variant={asset.status === "Active" ? "default" : "secondary"}>
-                    {asset.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href={`/assets/${asset.id}`}>
-                      View Details
-                    </Link>
-                  </Button>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8">
+                  Loading assets...
                 </TableCell>
               </TableRow>
-            ))}
+            ) : filteredAssets.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8">
+                  {searchTerm || selectedType !== "All Types"
+                    ? "No assets found matching your filters"
+                    : "No assets found. Create your first asset!"}
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredAssets.map((asset) => (
+                <TableRow key={asset.mintAddress}>
+                  <TableCell className="font-medium">{asset.code}</TableCell>
+                  <TableCell>{asset.name}</TableCell>
+                  <TableCell>{asset.assetType}</TableCell>
+                  <TableCell className="text-right">{asset.initialSupply}</TableCell>
+                  <TableCell>
+                    <Badge variant={asset.regulated ? "secondary" : "default"}>
+                      {asset.regulated ? "Regulated" : "Active"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href={`/assets/${asset.mintAddress}`}>
+                        View Details
+                      </Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

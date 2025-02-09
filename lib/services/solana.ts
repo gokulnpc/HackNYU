@@ -33,7 +33,7 @@ interface RawAssetMetadata {
   freezeEnabled: boolean;
   clawbackEnabled: boolean;
   regulated: boolean;
-  mintAddress: PublicKey;
+  owner: PublicKey;
 }
 
 // ✅ Processed metadata structure for frontend use
@@ -42,8 +42,8 @@ interface AssetMetadata {
   code: string;
   assetType: string;
   decimals: number;
-  initialSupply: number;
-  limit?: number;
+  initialSupply: string;
+  limit?: string;
   authorizeRequired: boolean;
   freezeEnabled: boolean;
   clawbackEnabled: boolean;
@@ -90,19 +90,17 @@ class SolanaService {
       const accounts = await this.program.account.assetMetadata.all();
       console.log("✅ Fetched all assets:", accounts);
       return accounts.map((account) => ({
-        name: account.account.name as string,
-        code: account.account.code as string,
-        assetType: account.account.assetType as string,
-        decimals: account.account.decimals as number,
-        initialSupply: (account.account.initialSupply as BN).toString(),
-        limit: account.account.limit
-          ? (account.account.limit as BN).toString()
-          : undefined,
-        authorizeRequired: account.account.authorizeRequired as boolean,
-        freezeEnabled: account.account.freezeEnabled as boolean,
-        clawbackEnabled: account.account.clawbackEnabled as boolean,
-        regulated: account.account.regulated as boolean,
-        mintAddress: (account.account.owner as PublicKey)?.toBase58(),
+        name: account.account.name,
+        code: account.account.code,
+        assetType: account.account.assetType,
+        decimals: account.account.decimals,
+        initialSupply: account.account.initialSupply.toString(),
+        limit: account.account.limit ? account.account.limit.toString() : undefined,
+        authorizeRequired: account.account.authorizeRequired,
+        freezeEnabled: account.account.freezeEnabled,
+        clawbackEnabled: account.account.clawbackEnabled,
+        regulated: account.account.regulated,
+        mintAddress: account.publicKey.toString()
       }));
     } catch (error) {
       console.error("❌ Error fetching assets:", error);
@@ -206,27 +204,26 @@ class SolanaService {
   /**
    * ✅ Get a specific asset by mint address
    */
-  async getAssetByMint(mintAddress: PublicKey): Promise<AssetMetadata | null> {
+  async getAssetByMint(mintAddress: string): Promise<AssetMetadata | null> {
     try {
-      console.log(`🔍 Fetching asset with mint: ${mintAddress.toBase58()}`);
-      const account = (await this.program.account.assetMetadata.fetch(
-        mintAddress
-      )) as unknown as RawAssetMetadata;
+      console.log(`🔍 Fetching asset with mint: ${mintAddress}`);
+      const publicKey = new PublicKey(mintAddress);
+      const account = await this.program.account.assetMetadata.fetch(publicKey);
 
       if (!account) return null;
 
       return {
-        name: account.name as string,
-        code: account.code as string,
-        assetType: account.assetType as string,
-        decimals: account.decimals as number,
-        initialSupply: account.initialSupply.toNumber(),
-        limit: account.limit ? account.limit.toNumber() : undefined,
+        name: account.name,
+        code: account.code,
+        assetType: account.assetType,
+        decimals: account.decimals,
+        initialSupply: account.initialSupply.toString(),
+        limit: account.limit ? account.limit.toString() : undefined,
         authorizeRequired: account.authorizeRequired,
         freezeEnabled: account.freezeEnabled,
         clawbackEnabled: account.clawbackEnabled,
         regulated: account.regulated,
-        mintAddress: account.mintAddress.toBase58(),
+        mintAddress: mintAddress
       };
     } catch (error) {
       console.error("❌ Error fetching asset:", error);
