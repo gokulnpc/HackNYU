@@ -9,18 +9,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight, Shield, Zap, Lock, Coins, Wallet, BarChart3 } from "lucide-react";
+import {
+  ArrowRight,
+  Shield,
+  Zap,
+  Lock,
+  Coins,
+  Wallet,
+  BarChart3,
+} from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <header className="fixed w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
+      {/* <header className="fixed w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
         <div className="container flex h-14 items-center justify-between">
-          {/* <div className="flex items-center space-x-2">
-            <Shield className="h-6 w-6" />
-            <span className="font-bold text-xl">Asset Sandbox</span>
-          </div> */}
           <nav className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
               <Link href="/signin">Sign In</Link>
@@ -30,7 +34,7 @@ export default function LandingPage() {
             </Button>
           </nav>
         </div>
-      </header>
+      </header> */}
 
       {/* Main Content */}
       <main className="flex-1">
@@ -42,8 +46,8 @@ export default function LandingPage() {
               <span className="text-primary"> Confidence</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              A powerful platform for creating, managing, and tracking your digital assets
-              on the Solana blockchain.
+              A powerful platform for creating, managing, and tracking your
+              digital assets on the Solana blockchain.
             </p>
             <div className="flex justify-center gap-4">
               <Button size="lg" asChild>
@@ -65,7 +69,9 @@ export default function LandingPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Assets</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Total Assets
+                  </CardTitle>
                   <Coins className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -74,7 +80,9 @@ export default function LandingPage() {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Treasury Balance</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Treasury Balance
+                  </CardTitle>
                   <Wallet className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -83,7 +91,9 @@ export default function LandingPage() {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">24h Volume</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    24h Volume
+                  </CardTitle>
                   <BarChart3 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -92,7 +102,9 @@ export default function LandingPage() {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Active Users
+                  </CardTitle>
                   <Shield className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -115,12 +127,13 @@ export default function LandingPage() {
                   <Zap className="h-10 w-10 text-primary mb-2" />
                   <CardTitle>Lightning Fast</CardTitle>
                   <CardDescription>
-                    Create and deploy assets in seconds with our streamlined interface
+                    Create and deploy assets in seconds with our streamlined
+                    interface
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  Experience instant transactions and real-time updates on the Solana
-                  blockchain.
+                  Experience instant transactions and real-time updates on the
+                  Solana blockchain.
                 </CardContent>
               </Card>
               <Card>
@@ -132,8 +145,8 @@ export default function LandingPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  Advanced encryption and multi-signature protection for your assets
-                  and transactions.
+                  Advanced encryption and multi-signature protection for your
+                  assets and transactions.
                 </CardContent>
               </Card>
               <Card>
