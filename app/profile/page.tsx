@@ -41,13 +41,15 @@ export default function ProfilePage() {
     if (!wallet.publicKey) return;
 
     const fetchBalance = async () => {
-      try {
-        const balance = await connection.getBalance(wallet.publicKey);
-        setWalletBalance(balance / 1e9); // Convert lamports to SOL
-      } catch (error) {
-        console.error("Error fetching wallet balance:", error);
-      }
-    };
+    try {
+      const publicKey = wallet.publicKey;
+      if (!publicKey) return;
+      const balance = await connection.getBalance(publicKey);
+      setWalletBalance(balance / 1e9);
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+    }
+  };
 
     fetchBalance();
   }, [wallet.publicKey, connection]);
@@ -58,7 +60,12 @@ export default function ProfilePage() {
     const fetchAssets = async () => {
       try {
         const solanaService = getSolanaService(wallet); // ✅ Ensure localnet RPC is used
-        const assetsList: Asset[] = await solanaService.getAllAssets();
+        const metadata = await solanaService.getAllAssets();
+        const assetsList: Asset[] = metadata.map(asset => ({
+          name: asset.name,
+          symbol: asset.code,
+          mint: asset.mintAddress
+        }));
         setAssets(assetsList);
       } catch (error) {
         console.error("Error fetching assets:", error);
