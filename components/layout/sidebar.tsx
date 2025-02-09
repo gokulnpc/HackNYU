@@ -13,6 +13,7 @@ import {
   Search,
   UserCircle,
   Settings,
+  Shield,
 } from "lucide-react";
 
 const routes = [
@@ -66,6 +67,7 @@ export function Sidebar() {
     <div className="w-64 bg-black text-white">
       <div className="h-full px-3 py-4">
         <Link href="/" className="flex items-center px-3 mb-14">
+          <Shield className="h-6 w-6" />
           <h1 className="text-2xl font-bold">Asset Sandbox</h1>
         </Link>
         <div className="space-y-1">
