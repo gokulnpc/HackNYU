@@ -176,7 +176,7 @@ export default function LandingPage() {
               <span className="font-semibold">Asset Sandbox</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2024 Asset Sandbox. All rights reserved.
+              © 2024 SOLfolio. All rights reserved.
             </p>
           </div>
         </div>

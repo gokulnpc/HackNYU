@@ -143,7 +143,7 @@ export function Sidebar() {
           <Shield className="h-6 w-6 text-primary" />
           {!isCollapsed && (
             <h1 className="text-1xl font-bold text-primary ml-2 sidebar-content-transition">
-              Asset Sandbox
+              SOLfolio
             </h1>
           )}
         </Link>

@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
@@ -30,15 +29,15 @@ import {
   Pencil,
   Trash2,
   RefreshCw,
+  Plus,
 } from "lucide-react";
 
-// Mock data
+// Mock data remains the same
 const teamMembers = [
-  { id: "1764", member: "34242", role: "ADMINISTRATOR" },
-  { id: "1719", member: "Aakash R.", role: "ADMINISTRATOR" },
-  { id: "1750", member: "Aaron S.", role: "Jefe" },
-  { id: "1845", member: "Abdulrasheed", role: "Jefe" },
-  { id: "1827", member: "Abinash", role: "Jefe" },
+  { id: "1764", member: "Gokul", role: "ADMINISTRATOR" },
+  { id: "1719", member: "Kevin", role: "ADMINISTRATOR" },
+  { id: "1750", member: "Divyansh", role: "User" },
+  { id: "1845", member: "Adithyah", role: "User" },
 ];
 
 const rolePermissions = [
@@ -77,26 +76,26 @@ const roles = [
   { name: "ADMINISTRATOR", canModify: true },
   { name: "GERENTE ADMINISTATIVO", canModify: true },
   { name: "Gerente de Operações", canModify: true },
-  { name: "Jefe", canModify: true },
+  { name: "User", canModify: true },
 ];
 
 const transactions = [
   {
     type: "Change trustline",
     date: "02/07/25, 09:38 PM",
-    fee: "0.00004 XLM",
+    fee: "0.00004 SOL",
     feeUsd: "$0.0000133",
   },
   {
     type: "Account created",
     date: "02/07/25, 09:15 PM",
-    fee: "0.00004 XLM",
+    fee: "0.00004 SOL",
     feeUsd: "$0.0000133",
   },
   {
     type: "Minted",
     date: "02/07/25, 12:23 AM",
-    fee: "0.00002 XLM",
+    fee: "0.00002 SOL",
     feeUsd: "$0.0000066",
   },
 ];
@@ -105,209 +104,336 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("team");
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Administration</h1>
-      </div>
-
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-6"
-      >
-        <TabsList>
-          <TabsTrigger value="team" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Team Members
-          </TabsTrigger>
-          <TabsTrigger value="permissions" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Role Permissions
-          </TabsTrigger>
-          <TabsTrigger value="roles" className="flex items-center gap-2">
-            <UserCog className="h-4 w-4" />
-            Roles
-          </TabsTrigger>
-          <TabsTrigger value="expenses" className="flex items-center gap-2">
-            <DollarSign className="h-4 w-4" />
-            Operating Expenses
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="team">
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Members</CardTitle>
-              <CardDescription>
-                Manage your team members and their roles
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>MEMBER</TableHead>
-                    <TableHead>ROLE</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {teamMembers.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell>{member.id}</TableCell>
-                      <TableCell>{member.member}</TableCell>
-                      <TableCell>{member.role}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="permissions">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Permissions</CardTitle>
-                  <CardDescription>
-                    You are only able to modify roles that you have created.
-                  </CardDescription>
-                </div>
-                <Button>Save changes</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ROLE NAME</TableHead>
-                    <TableHead>ADMIN 😊</TableHead>
-                    <TableHead>ADMINISTRATOR</TableHead>
-                    <TableHead>MANAGER</TableHead>
-                    <TableHead>OPERATOR</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rolePermissions.map((permission) => (
-                    <TableRow key={permission.name}>
-                      <TableCell>{permission.name}</TableCell>
-                      <TableCell>
-                        <Checkbox checked={permission.admin} />
-                      </TableCell>
-                      <TableCell>
-                        <Checkbox checked={permission.administrator} />
-                      </TableCell>
-                      <TableCell>
-                        <Checkbox checked={permission.manager} />
-                      </TableCell>
-                      <TableCell>
-                        <Checkbox checked={permission.operator} />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="roles">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Roles</CardTitle>
-                  <CardDescription>
-                    You are only able to modify roles that you have created.
-                  </CardDescription>
-                </div>
-                <Button>Create role</Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ROLE NAME</TableHead>
-                    <TableHead className="text-right">ACTIONS</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {roles.map((role) => (
-                    <TableRow key={role.name}>
-                      <TableCell>{role.name}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          <Pencil className="h-4 w-4 mr-2" />
-                          Rename
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="expenses">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sandbox Expenses Account</CardTitle>
-              <CardDescription>
-                Cost of the last 100 transactions
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
-                <div className="flex items-center gap-4">
-                  <span className="text-xl font-bold">0.00457 XLM</span>
-                  <RefreshCw className="h-4 w-4" />
-                  <span className="text-xl font-bold">$0.001518</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch id="soroban" />
-                  <label htmlFor="soroban">Include Soroban Transactions</label>
-                </div>
-              </div>
-
-                            <div>
-                                <h3 className="text-lg font-semibold mb-4">Transaction history</h3>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>TRANSACTION</TableHead>
-                                            <TableHead>DATE</TableHead>
-                                            <TableHead>COVERED FEE (XLM)</TableHead>
-                                            <TableHead>COVERED FEE (USD)</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {transactions.map((tx, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{tx.type}</TableCell>
-                                                <TableCell>{tx.date}</TableCell>
-                                                <TableCell>{tx.fee}</TableCell>
-                                                <TableCell>{tx.feeUsd}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-            </Tabs>
+    <div className="min-h-screen bg-gradient-green-soft">
+      <div className="p-8 max-w-[1400px] mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-green-800">
+              Administration
+            </h1>
+            <p className="text-green-600 mt-1">
+              Manage team members and system settings
+            </p>
+          </div>
         </div>
-    );
+
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="space-y-6"
+          >
+            <TabsList className="bg-green-50 p-1">
+              <TabsTrigger
+                value="team"
+                className="data-[state=active]:bg-white data-[state=active]:text-green-800"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Team Members
+              </TabsTrigger>
+              <TabsTrigger
+                value="permissions"
+                className="data-[state=active]:bg-white data-[state=active]:text-green-800"
+              >
+                <Shield className="h-4 w-4 mr-2" />
+                Role Permissions
+              </TabsTrigger>
+              <TabsTrigger
+                value="roles"
+                className="data-[state=active]:bg-white data-[state=active]:text-green-800"
+              >
+                <UserCog className="h-4 w-4 mr-2" />
+                Roles
+              </TabsTrigger>
+              <TabsTrigger
+                value="expenses"
+                className="data-[state=active]:bg-white data-[state=active]:text-green-800"
+              >
+                <DollarSign className="h-4 w-4 mr-2" />
+                Operating Expenses
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="team">
+              <Card className="bg-white border-green-100">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-green-800">
+                        Team Members
+                      </CardTitle>
+                      <CardDescription className="text-green-600">
+                        Manage your team members and their roles
+                      </CardDescription>
+                    </div>
+                    <Button className="bg-gradient-green hover:opacity-90 transition-opacity gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add Member
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="hover:bg-green-50">
+                        <TableHead className="text-green-800">ID</TableHead>
+                        <TableHead className="text-green-800">MEMBER</TableHead>
+                        <TableHead className="text-green-800">ROLE</TableHead>
+                        <TableHead className="text-green-800">
+                          ACTIONS
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {teamMembers.map((member) => (
+                        <TableRow key={member.id} className="hover:bg-green-50">
+                          <TableCell className="font-medium text-green-800">
+                            {member.id}
+                          </TableCell>
+                          <TableCell className="text-green-700">
+                            {member.member}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className="bg-green-100 text-green-800 border-green-200"
+                            >
+                              {member.role}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-green-600 hover:text-green-700 hover:bg-green-100"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="permissions">
+              <Card className="bg-white border-green-100">
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle className="text-green-800">
+                        Permissions
+                      </CardTitle>
+                      <CardDescription className="text-green-600">
+                        You are only able to modify roles that you have created
+                      </CardDescription>
+                    </div>
+                    <Button className="bg-gradient-green hover:opacity-90 transition-opacity">
+                      Save changes
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="hover:bg-green-50">
+                        <TableHead className="text-green-800">
+                          ROLE NAME
+                        </TableHead>
+                        <TableHead className="text-green-800">
+                          ADMIN 😊
+                        </TableHead>
+                        <TableHead className="text-green-800">
+                          ADMINISTRATOR
+                        </TableHead>
+                        <TableHead className="text-green-800">
+                          MANAGER
+                        </TableHead>
+                        <TableHead className="text-green-800">
+                          OPERATOR
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {rolePermissions.map((permission) => (
+                        <TableRow
+                          key={permission.name}
+                          className="hover:bg-green-50"
+                        >
+                          <TableCell className="font-medium text-green-800">
+                            {permission.name}
+                          </TableCell>
+                          <TableCell>
+                            <Checkbox
+                              checked={permission.admin}
+                              className="border-green-200 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Checkbox
+                              checked={permission.administrator}
+                              className="border-green-200 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Checkbox
+                              checked={permission.manager}
+                              className="border-green-200 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Checkbox
+                              checked={permission.operator}
+                              className="border-green-200 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="roles">
+              <Card className="bg-white border-green-100">
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle className="text-green-800">Roles</CardTitle>
+                      <CardDescription className="text-green-600">
+                        You are only able to modify roles that you have created
+                      </CardDescription>
+                    </div>
+                    <Button className="bg-gradient-green hover:opacity-90 transition-opacity gap-2">
+                      <Plus className="h-4 w-4" />
+                      Create role
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="hover:bg-green-50">
+                        <TableHead className="text-green-800">
+                          ROLE NAME
+                        </TableHead>
+                        <TableHead className="text-right text-green-800">
+                          ACTIONS
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {roles.map((role) => (
+                        <TableRow key={role.name} className="hover:bg-green-50">
+                          <TableCell className="font-medium text-green-800">
+                            {role.name}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-green-600 hover:text-green-700 hover:bg-green-100"
+                            >
+                              <Pencil className="h-4 w-4 mr-2" />
+                              Rename
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="expenses">
+              <Card className="bg-white border-green-100">
+                <CardHeader>
+                  <CardTitle className="text-green-800">
+                    Sandbox Expenses Account
+                  </CardTitle>
+                  <CardDescription className="text-green-600">
+                    Cost of the last 100 transactions
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between p-4 rounded-lg bg-green-50">
+                    <div className="flex items-center gap-4">
+                      <span className="text-xl font-bold text-green-800">
+                        0.00457 SOL
+                      </span>
+                      <RefreshCw className="h-4 w-4 text-green-600" />
+                      <span className="text-xl font-bold text-green-800">
+                        $0.001518
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-green-800 mb-4">
+                      Transaction history
+                    </h3>
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="hover:bg-green-50">
+                          <TableHead className="text-green-800">
+                            TRANSACTION
+                          </TableHead>
+                          <TableHead className="text-green-800">DATE</TableHead>
+                          <TableHead className="text-green-800">
+                            COVERED FEE (SOL)
+                          </TableHead>
+                          <TableHead className="text-green-800">
+                            COVERED FEE (USD)
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {transactions.map((tx, index) => (
+                          <TableRow key={index} className="hover:bg-green-50">
+                            <TableCell className="font-medium text-green-800">
+                              {tx.type}
+                            </TableCell>
+                            <TableCell className="text-green-700">
+                              {tx.date}
+                            </TableCell>
+                            <TableCell className="font-mono text-green-700">
+                              {tx.fee}
+                            </TableCell>
+                            <TableCell className="font-mono text-green-700">
+                              {tx.feeUsd}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  );
 }
