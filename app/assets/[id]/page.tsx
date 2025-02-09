@@ -200,7 +200,7 @@ export default function AssetDetailsPage() {
               <CardContent className="text-sm text-muted-foreground">
                 <p>
                   Minting allows for the creation of new tokens on the Stellar Network.
-                  When minting, a predefined number of tokens are added to the issuer's
+                  When minting, a predefined number of tokens are added to the issuer&aops;s
                   account, increasing the total supply. This process is used for
                   distributing rewards, or any system where new token generation is needed.
                 </p>
