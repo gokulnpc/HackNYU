@@ -17,10 +17,10 @@ export default function LandingPage() {
       {/* Hero Section */}
       <header className="fixed w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
         <div className="container flex h-14 items-center justify-between">
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <Shield className="h-6 w-6" />
             <span className="font-bold text-xl">Asset Sandbox</span>
-          </div>
+          </div> */}
           <nav className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
               <Link href="/signin">Sign In</Link>

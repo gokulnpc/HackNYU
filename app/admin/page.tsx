@@ -281,35 +281,33 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-lg font-semibold mb-4">
-                  Transaction&apos;s history
-                </h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>TRANSACTION</TableHead>
-                      <TableHead>DATE</TableHead>
-                      <TableHead>COVERED FEE (XLM)</TableHead>
-                      <TableHead>COVERED FEE (USD)</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {transactions.map((tx, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{tx.type}</TableCell>
-                        <TableCell>{tx.date}</TableCell>
-                        <TableCell>{tx.fee}</TableCell>
-                        <TableCell>{tx.feeUsd}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
+                            <div>
+                                <h3 className="text-lg font-semibold mb-4">Transaction history</h3>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>TRANSACTION</TableHead>
+                                            <TableHead>DATE</TableHead>
+                                            <TableHead>COVERED FEE (XLM)</TableHead>
+                                            <TableHead>COVERED FEE (USD)</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {transactions.map((tx, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{tx.type}</TableCell>
+                                                <TableCell>{tx.date}</TableCell>
+                                                <TableCell>{tx.fee}</TableCell>
+                                                <TableCell>{tx.feeUsd}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+        </div>
+    );
 }
