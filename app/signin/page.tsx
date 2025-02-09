@@ -65,7 +65,7 @@ export default function SignIn() {
         <div className="flex flex-col items-center space-y-2 text-center">
           <Link href="/" className="flex items-center space-x-2 mb-8">
             <Shield className="h-6 w-6" />
-            <span className="font-bold text-xl">Asset Sandbox</span>
+            <span className="font-bold text-xl"></span>
           </Link>
           <h1 className="text-2xl font-semibold tracking-tight">
             Welcome back

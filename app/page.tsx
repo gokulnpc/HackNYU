@@ -119,7 +119,7 @@ export default function LandingPage() {
         <section className="py-20 px-4">
           <div className="container mx-auto">
             <h2 className="text-3xl font-bold text-center mb-12">
-              Why Choose Asset Sandbox?
+              Why Choose SOLfolio?
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <Card>
@@ -173,7 +173,7 @@ export default function LandingPage() {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <Shield className="h-5 w-5" />
-              <span className="font-semibold">Asset Sandbox</span>
+              <span className="font-semibold">SOLfolio</span>
             </div>
             <p className="text-sm text-muted-foreground">
               © 2024 SOLfolio. All rights reserved.

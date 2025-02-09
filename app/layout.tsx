@@ -6,7 +6,7 @@ import RootLayoutClient from "./layout.client";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Solana Asset Sandbox",
+  title: "SOLfolio",
   description: "Asset issuance and management platform on Solana",
 };
 

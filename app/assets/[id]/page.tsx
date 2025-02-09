@@ -116,10 +116,16 @@ export default function AssetDetailsPage() {
 
   const addActivityDataPoint = (amount: number, type: "mint" | "burn") => {
     const now = new Date();
-    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const time = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
-    setActivityData(prev => {
-      const newData = [...prev, { time, amount: type === "mint" ? amount : -amount, type }];
+    setActivityData((prev) => {
+      const newData = [
+        ...prev,
+        { time, amount: type === "mint" ? amount : -amount, type },
+      ];
       // Keep only last 24 data points
       if (newData.length > 24) {
         return newData.slice(-24);
@@ -209,22 +215,25 @@ export default function AssetDetailsPage() {
     switch (activeTab) {
       case "mint":
         return (
-          <div className="space-y-6">
-            <Card>
+          <div className="space-y-6 ">
+            <Card className="bg-white">
               <CardHeader>
-                <CardTitle>Mint Assets</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-green-800">Mint Assets</CardTitle>
+                <CardDescription className="text-green-600 ">
                   Create new tokens and add them to circulation
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Amount to mint</label>
+                <div className="space-y-2 text-green-800">
+                  <label className="text-sm font-medium text-green-600">
+                    Amount to mint
+                  </label>
                   <Input
                     type="number"
                     placeholder="Enter amount to mint..."
                     value={mintAmount}
                     onChange={(e) => setMintAmount(e.target.value)}
+                    className="bg-green-50"
                   />
                 </div>
 
@@ -247,15 +256,15 @@ export default function AssetDetailsPage() {
 
             <ActivityChart data={activityData} assetCode={asset.code} />
 
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
-                <CardTitle>About Mint</CardTitle>
+                <CardTitle className="text-green-800">About Mint</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                <p>
+              <CardContent className="text-sm ">
+                <p className="text-green-800">
                   Minting allows for the creation of new tokens on the Stellar
                   Network. When minting, a predefined number of tokens are added
-                  to the issuer&aops;s account, increasing the total supply.
+                  to the issuer&apos;s account, increasing the total supply.
                   This process is used for distributing rewards, or any system
                   where new token generation is needed.
                 </p>
@@ -267,21 +276,24 @@ export default function AssetDetailsPage() {
       case "burn":
         return (
           <div className="space-y-6">
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
-                <CardTitle>Burn Assets</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-green-800">Burn Assets</CardTitle>
+                <CardDescription className="text-green-600 ">
                   Permanently remove tokens from circulation
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Amount to burn</label>
+                <div className="space-y-2 text-green-800">
+                  <label className="text-sm font-medium text-green-600">
+                    Amount to burn
+                  </label>
                   <Input
                     type="number"
                     placeholder="Enter amount to burn..."
-                    value={burnAmount}
-                    onChange={(e) => setBurnAmount(e.target.value)}
+                    value={mintAmount}
+                    onChange={(e) => setMintAmount(e.target.value)}
+                    className="bg-green-50"
                   />
                 </div>
 
@@ -304,12 +316,12 @@ export default function AssetDetailsPage() {
 
             <ActivityChart data={activityData} assetCode={asset.code} />
 
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
-                <CardTitle>About Burn</CardTitle>
+                <CardTitle className="text-green-800">About Burn</CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                <p>
+              <CardContent className="text-sm ">
+                <p className="text-green-800">
                   Burning is the process of permanently removing tokens from
                   circulation on the Stellar Network. This reduces the total
                   supply and can be used for mechanisms like token buybacks or
@@ -323,19 +335,23 @@ export default function AssetDetailsPage() {
       case "distribute":
         return (
           <div className="space-y-6">
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
-                <CardTitle>Distribute Assets</CardTitle>
-                <CardDescription>Send tokens to other accounts</CardDescription>
+                <CardTitle className="text-green-800">
+                  Distribute Assets
+                </CardTitle>
+                <CardDescription className="text-green-600">
+                  Send tokens to other accounts
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 text-green-600">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Destination</label>
                   <Select
                     value={selectedDestination}
                     onValueChange={setSelectedDestination}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-green-50">
                       <SelectValue placeholder="Select destination..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -351,6 +367,7 @@ export default function AssetDetailsPage() {
                   <Input
                     type="number"
                     placeholder="Enter amount to distribute..."
+                    className="bg-green-50 text-green-800"
                     value={distributeAmount}
                     onChange={(e) => setDistributeAmount(e.target.value)}
                   />
@@ -367,12 +384,14 @@ export default function AssetDetailsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
-                <CardTitle>About Distribution</CardTitle>
+                <CardTitle className="text-green-800">
+                  About Distribution
+                </CardTitle>
               </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                <p>
+              <CardContent className="text-sm ">
+                <p className="text-green-800">
                   Distribution refers to the process of allocating tokens to
                   various accounts on the Stellar Network. This can be done
                   through sales, rewards, or airdrops, enabling tokens to
@@ -385,37 +404,41 @@ export default function AssetDetailsPage() {
 
       default:
         return (
-          <div className="grid gap-6">
-            <Card>
+          <div className="grid gap-6 ">
+            <Card className="bg-white">
               <CardHeader>
-                <CardTitle>Asset Overview</CardTitle>
-                <CardDescription>Key details and statistics</CardDescription>
+                <CardTitle className="text-green-800">Asset Overview</CardTitle>
+                <CardDescription className="text-green-600 ">
+                  Key details and statistics
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <dl className="grid grid-cols-2 gap-4">
                   <div>
-                    <dt className="text-sm font-medium text-muted-foreground">
+                    <dt className="text-sm font-medium text-muted-foreground ">
                       Type
                     </dt>
-                    <dd className="text-lg">{asset.assetType}</dd>
+                    <dd className="text-lg text-black">{asset.assetType}</dd>
                   </div>
                   <div>
-                    <dt className="text-sm font-medium text-muted-foreground">
+                    <dt className="text-sm font-medium text-muted-foreground ">
                       Supply
                     </dt>
-                    <dd className="text-lg">{asset.initialSupply}</dd>
+                    <dd className="text-lg text-black">
+                      {asset.initialSupply}
+                    </dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-muted-foreground">
                       Decimals
                     </dt>
-                    <dd className="text-lg">{asset.decimals}</dd>
+                    <dd className="text-lg text-black">{asset.decimals}</dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-muted-foreground">
                       Regulated
                     </dt>
-                    <dd className="text-lg">
+                    <dd className="text-lg text-black">
                       {asset.regulated ? "Yes" : "No"}
                     </dd>
                   </div>
@@ -423,26 +446,28 @@ export default function AssetDetailsPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white">
               <CardHeader>
-                <CardTitle>Security Settings</CardTitle>
+                <CardTitle className="text-green-800">
+                  Security Settings
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span>Authorization Required</span>
-                  <Badge variant="outline">
+                  <span className="text-black">Authorization Required</span>
+                  <Badge variant="outline" className="text-black">
                     {asset.authorizeRequired ? "Yes" : "No"}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Freeze Enabled</span>
-                  <Badge variant="outline">
+                  <span className="text-black">Freeze Enabled</span>
+                  <Badge variant="outline" className="text-black">
                     {asset.freezeEnabled ? "Yes" : "No"}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Clawback Enabled</span>
-                  <Badge variant="outline">
+                  <span className="text-black">Clawback Enabled</span>
+                  <Badge variant="outline" className="text-black">
                     {asset.clawbackEnabled ? "Yes" : "No"}
                   </Badge>
                 </div>
@@ -454,19 +479,21 @@ export default function AssetDetailsPage() {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-green-50">
       <div className="flex-1 p-8">
         <div className="mb-8">
           <Button variant="ghost" size="sm" asChild className="mb-4">
-            <Link href="/assets">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+            <Link href="/assets" className="text-green-700">
+              <ArrowLeft className="mr-2 h-4 w-4 text-green-700" />
               Back to Assets
             </Link>
           </Button>
 
           <div className="flex items-center gap-4">
-            <h1 className="text-3xl font-bold">{asset.name}</h1>
-            <Badge variant="outline">{asset.code}</Badge>
+            <h1 className="text-3xl font-bold text-green-900">{asset.name}</h1>
+            <Badge variant="outline" className="text-green-700">
+              {asset.code}
+            </Badge>
             <Badge variant={asset.regulated ? "secondary" : "default"}>
               {asset.assetType}
             </Badge>
@@ -480,7 +507,7 @@ export default function AssetDetailsPage() {
         <h2 className="font-semibold mb-4">Actions</h2>
         <Button
           variant={activeTab === "home" ? "secondary" : "ghost"}
-          className="w-full justify-start"
+          className="w-full justify-start text-green-800"
           onClick={() => setActiveTab("home")}
         >
           <Home className="mr-2 h-4 w-4" />
@@ -488,7 +515,7 @@ export default function AssetDetailsPage() {
         </Button>
         <Button
           variant={activeTab === "mint" ? "secondary" : "ghost"}
-          className="w-full justify-start"
+          className="w-full justify-start text-green-800"
           onClick={() => setActiveTab("mint")}
         >
           <Coins className="mr-2 h-4 w-4" />
@@ -496,7 +523,7 @@ export default function AssetDetailsPage() {
         </Button>
         <Button
           variant={activeTab === "burn" ? "secondary" : "ghost"}
-          className="w-full justify-start"
+          className="w-full justify-start text-green-800"
           onClick={() => setActiveTab("burn")}
         >
           <Flame className="mr-2 h-4 w-4" />
@@ -504,7 +531,7 @@ export default function AssetDetailsPage() {
         </Button>
         <Button
           variant={activeTab === "distribute" ? "secondary" : "ghost"}
-          className="w-full justify-start"
+          className="w-full justify-start text-green-800"
           onClick={() => setActiveTab("distribute")}
         >
           <Share2 className="mr-2 h-4 w-4" />
@@ -512,7 +539,7 @@ export default function AssetDetailsPage() {
         </Button>
         <Button
           variant={activeTab === "authorize" ? "secondary" : "ghost"}
-          className="w-full justify-start"
+          className="w-full justify-start text-green-800"
           onClick={() => setActiveTab("authorize")}
         >
           <Lock className="mr-2 h-4 w-4" />
@@ -520,7 +547,7 @@ export default function AssetDetailsPage() {
         </Button>
         <Button
           variant={activeTab === "freeze" ? "secondary" : "ghost"}
-          className="w-full justify-start"
+          className="w-full justify-start text-green-800"
           onClick={() => setActiveTab("freeze")}
         >
           <Shield className="mr-2 h-4 w-4" />
@@ -528,7 +555,7 @@ export default function AssetDetailsPage() {
         </Button>
         <Button
           variant={activeTab === "clawback" ? "secondary" : "ghost"}
-          className="w-full justify-start"
+          className="w-full justify-start text-green-800"
           onClick={() => setActiveTab("clawback")}
         >
           <RefreshCw className="mr-2 h-4 w-4" />
@@ -536,7 +563,7 @@ export default function AssetDetailsPage() {
         </Button>
         <Button
           variant={activeTab === "publish" ? "secondary" : "ghost"}
-          className="w-full justify-start"
+          className="w-full justify-start text-green-800"
           onClick={() => setActiveTab("publish")}
         >
           <FileText className="mr-2 h-4 w-4" />
