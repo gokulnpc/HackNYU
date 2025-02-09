@@ -132,8 +132,8 @@ export default function ForgePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-green-soft">
-      <div className="p-8 max-w-[1400px] mx-auto">
+    <div className="flex flex-col min-h-screen bg-gradient-green-soft">
+      <div className="flex-1 container mx-auto px-4 py-8 max-w-[1400px]">
         <Button
           variant="ghost"
           size="sm"
@@ -154,7 +154,10 @@ export default function ForgePage() {
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 mb-8"
+          >
             <div className="grid gap-6 md:grid-cols-2">
               <Card className="border-green-100 bg-white">
                 <CardHeader>

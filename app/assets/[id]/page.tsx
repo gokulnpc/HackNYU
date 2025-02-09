@@ -42,6 +42,9 @@ import {
   RefreshCw,
   FileText,
   Home,
+  ExternalLink,
+  Copy,
+  HelpCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
@@ -501,6 +504,40 @@ export default function AssetDetailsPage() {
         </div>
 
         {renderContent()}
+
+        {/* Minimalistic Footer */}
+        <footer className="mt-12 border-t border-green-100 pt-6 pb-2">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3 text-green-600">
+              <span className="text-sm font-mono">{asset.mintAddress}</span>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Copy className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() =>
+                  window.open(
+                    `https://explorer.solana.com/address/${asset.mintAddress}?cluster=devnet`,
+                    "_blank"
+                  )
+                }
+              >
+                <ExternalLink className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-green-50 text-green-800">
+                Devnet
+              </Badge>
+              <div className="flex items-center gap-2 text-green-600">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="text-sm">Active</span>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
 
       <div className="w-64 border-l p-4 space-y-2 bg-green-50">
