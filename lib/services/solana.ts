@@ -94,15 +94,15 @@ class SolanaService {
         code: account.account.code as string,
         assetType: account.account.assetType as string,
         decimals: account.account.decimals as number,
-        initialSupply: (account.account.initialSupply as BN).toNumber(),
+        initialSupply: (account.account.initialSupply as BN).toString(),
         limit: account.account.limit
-          ? (account.account.limit as BN).toNumber()
+          ? (account.account.limit as BN).toString()
           : undefined,
         authorizeRequired: account.account.authorizeRequired as boolean,
         freezeEnabled: account.account.freezeEnabled as boolean,
         clawbackEnabled: account.account.clawbackEnabled as boolean,
         regulated: account.account.regulated as boolean,
-        mintAddress: (account.account.mintAddress as PublicKey).toBase58(),
+        mintAddress: (account.account.owner as PublicKey)?.toBase58(),
       }));
     } catch (error) {
       console.error("❌ Error fetching assets:", error);
