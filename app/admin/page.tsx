@@ -277,7 +277,7 @@ export default function AdminPage() {
                             </div>
 
                             <div>
-                                <h3 className="text-lg font-semibold mb-4">Transaction's history</h3>
+                                <h3 className="text-lg font-semibold mb-4">Transaction history</h3>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
