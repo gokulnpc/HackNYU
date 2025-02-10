@@ -27,7 +27,7 @@ Experience SOLfolio at [solfolio.nyc](https://solfolio.nyc)
 
 Watch SOLfolio in action:
 
-[![SOLfolio](https://markdown-videos-api.jorgenkh.no/youtube/dQw4w9WgXcQ)](https://youtu.be/dQw4w9WgXcQ)
+[![SOLfolio](https://markdown-videos-api.jorgenkh.no/youtube/eGUXIDN6O2A)](https://youtu.be/eGUXIDN6O2A)
 
 ## ✨ Key Features
 
